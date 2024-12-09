@@ -1,0 +1,10 @@
+line-length = 79
+
+[lint]
+
+select = [
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "UP", # pyupgrade,
+    "I",  # isort
+]

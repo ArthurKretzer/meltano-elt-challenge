@@ -1,0 +1,62 @@
+version: 1
+default_environment: dev
+project_id: 20ab51bb-9080-43d6-9faf-aaf733d164a0
+environments:
+  - name: dev
+  - name: staging
+  - name: prod
+plugins:
+  extractors:
+    - name: tap-csv
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
+      config:
+        add_metadata_columns: true
+        csv_files_definition: $CSV_FILE_DEFINITION
+    - name: tap-postgres
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
+      settings:
+        - name: filter_schemas
+          value: [public] # Substitua por esquemas que você deseja incluir
+      config:
+        default_replication_method: INCREMENTAL
+        host: localhost
+        port: 5432
+        user: northwind_user
+        password: thewindisblowing
+        database: northwind
+      select:
+        - "*.*"
+    - name: tap-parquet
+      variant: ae-nv
+      pip_url: git+https://github.com/AE-nv/tap-parquet.git
+  loaders:
+    - name: target-parquet
+      variant: automattic
+      pip_url: git+https://github.com/Automattic/target-parquet.git
+      config:
+        destination_path: ./extract/output/source=${SOURCE}/extracted_at=${TIMESTAMP}
+    - name: target-postgres
+      variant: meltanolabs
+      pip_url: meltanolabs-target-postgres
+      config:
+        host: localhost
+        port: 5433
+        user: northwind_user
+        password: thewindisblowing
+        database: northwind-replication
+        default_target_schema: ${SCHEMA}
+    - name: target-csv
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/target-csv.git
+      config:
+        file_naming_scheme: table={stream_name}/extracted_at={datestamp}/{timestamp}.csv
+        output_path: ./extract/output/source=${SOURCE}
+  utilities:
+    - name: airflow
+      variant: apache
+      pip_url:
+        git+https://github.com/meltano/airflow-ext.git@main apache-airflow==2.8.1
+        --constraint
+        https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-no-providers-${MELTANO__PYTHON_VERSION}.txt

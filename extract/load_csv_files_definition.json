@@ -1,0 +1,125 @@
+[
+    {
+        "entity": "public-categories",
+        "path": "./extract/output/source=postgres/table=public-categories/extracted_at=2024-12-08",
+        "keys": [
+            "category_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "category_id"
+        ]
+    },
+    {
+        "entity": "public-customers",
+        "path": "./extract/output/source=postgres/table=public-customers/extracted_at=2024-12-08",
+        "keys": [
+            "customer_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "customer_id"
+        ]
+    },
+    {
+        "entity": "public-employee_territories",
+        "path": "./extract/output/source=postgres/table=public-employee_territories/extracted_at=2024-12-08",
+        "keys": [
+            "employee_id",
+            "territory_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "employee_id",
+            "territory_id"
+        ]
+    },
+    {
+        "entity": "public-employees",
+        "path": "./extract/output/source=postgres/table=public-employees/extracted_at=2024-12-08",
+        "keys": [
+            "employee_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "employee_id"
+        ]
+    },
+    {
+        "entity": "public-orders",
+        "path": "./extract/output/source=postgres/table=public-orders/extracted_at=2024-12-08",
+        "keys": [
+            "order_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "order_id"
+        ]
+    },
+    {
+        "entity": "public-products",
+        "path": "./extract/output/source=postgres/table=public-products/extracted_at=2024-12-08",
+        "keys": [
+            "product_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "product_id"
+        ]
+    },
+    {
+        "entity": "public-region",
+        "path": "./extract/output/source=postgres/table=public-region/extracted_at=2024-12-08",
+        "keys": [
+            "region_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "region_id"
+        ]
+    },
+    {
+        "entity": "public-shippers",
+        "path": "./extract/output/source=postgres/table=public-shippers/extracted_at=2024-12-08",
+        "keys": [
+            "shipper_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "shipper_id"
+        ]
+    },
+    {
+        "entity": "public-suppliers",
+        "path": "./extract/output/source=postgres/table=public-suppliers/extracted_at=2024-12-08",
+        "keys": [
+            "supplier_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "supplier_id"
+        ]
+    },
+    {
+        "entity": "public-territories",
+        "path": "./extract/output/source=postgres/table=public-territories/extracted_at=2024-12-08",
+        "keys": [
+            "territory_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "territory_id"
+        ]
+    },
+    {
+        "entity": "public-us_states",
+        "path": "./extract/output/source=postgres/table=public-us_states/extracted_at=2024-12-08",
+        "keys": [
+            "state_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "state_id"
+        ]
+    }
+]
