@@ -1,7 +1,20 @@
 [
     {
+        "entity": "public-order_details",
+        "path": "./extract/output/source=csv/extracted_at=2024-12-09/table=order_details",
+        "keys": [
+            "order_id",
+            "product_id"
+        ],
+        "delimiter": ",",
+        "primary_keys": [
+            "order_id",
+            "product_id"
+        ]
+    },
+    {
         "entity": "public-categories",
-        "path": "./extract/output/source=postgres/table=public-categories/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-categories/",
         "keys": [
             "category_id"
         ],
@@ -12,7 +25,7 @@
     },
     {
         "entity": "public-customers",
-        "path": "./extract/output/source=postgres/table=public-customers/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-customers/",
         "keys": [
             "customer_id"
         ],
@@ -23,7 +36,7 @@
     },
     {
         "entity": "public-employee_territories",
-        "path": "./extract/output/source=postgres/table=public-employee_territories/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-employee_territories/",
         "keys": [
             "employee_id",
             "territory_id"
@@ -36,7 +49,7 @@
     },
     {
         "entity": "public-employees",
-        "path": "./extract/output/source=postgres/table=public-employees/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-employees/",
         "keys": [
             "employee_id"
         ],
@@ -47,7 +60,7 @@
     },
     {
         "entity": "public-orders",
-        "path": "./extract/output/source=postgres/table=public-orders/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-orders/",
         "keys": [
             "order_id"
         ],
@@ -58,7 +71,7 @@
     },
     {
         "entity": "public-products",
-        "path": "./extract/output/source=postgres/table=public-products/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-products/",
         "keys": [
             "product_id"
         ],
@@ -69,7 +82,7 @@
     },
     {
         "entity": "public-region",
-        "path": "./extract/output/source=postgres/table=public-region/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-region/",
         "keys": [
             "region_id"
         ],
@@ -80,7 +93,7 @@
     },
     {
         "entity": "public-shippers",
-        "path": "./extract/output/source=postgres/table=public-shippers/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-shippers/",
         "keys": [
             "shipper_id"
         ],
@@ -91,7 +104,7 @@
     },
     {
         "entity": "public-suppliers",
-        "path": "./extract/output/source=postgres/table=public-suppliers/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-suppliers/",
         "keys": [
             "supplier_id"
         ],
@@ -102,7 +115,7 @@
     },
     {
         "entity": "public-territories",
-        "path": "./extract/output/source=postgres/table=public-territories/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-territories/",
         "keys": [
             "territory_id"
         ],
@@ -113,7 +126,7 @@
     },
     {
         "entity": "public-us_states",
-        "path": "./extract/output/source=postgres/table=public-us_states/extracted_at=2024-12-08",
+        "path": "./extract/output/source=postgres/extracted_at=2024-12-09/table=public-us_states/",
         "keys": [
             "state_id"
         ],
