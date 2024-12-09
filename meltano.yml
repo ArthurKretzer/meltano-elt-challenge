@@ -11,8 +11,9 @@ plugins:
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
       config:
-        add_metadata_columns: true
         csv_files_definition: $CSV_FILE_DEFINITION
+      select:
+        - "*.*"
     - name: tap-postgres
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
@@ -28,15 +29,7 @@ plugins:
         database: northwind
       select:
         - "*.*"
-    - name: tap-parquet
-      variant: ae-nv
-      pip_url: git+https://github.com/AE-nv/tap-parquet.git
   loaders:
-    - name: target-parquet
-      variant: automattic
-      pip_url: git+https://github.com/Automattic/target-parquet.git
-      config:
-        destination_path: ./extract/output/source=${SOURCE}/extracted_at=${TIMESTAMP}
     - name: target-postgres
       variant: meltanolabs
       pip_url: meltanolabs-target-postgres
@@ -51,7 +44,7 @@ plugins:
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/target-csv.git
       config:
-        file_naming_scheme: table={stream_name}/extracted_at={datestamp}/{timestamp}.csv
+        file_naming_scheme: extracted_at={datestamp}/table={stream_name}/{timestamp}.csv
         output_path: ./extract/output/source=${SOURCE}
   utilities:
     - name: airflow
