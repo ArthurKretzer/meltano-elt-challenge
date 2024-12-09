@@ -1,6 +1,6 @@
 [
     {
-        "entity": "order_details",
+        "entity": "public-order_details",
         "path": "./extract/order_details.csv",
         "keys": [
             "order_id",

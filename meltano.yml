@@ -1,19 +1,62 @@
 version: 1
-default_environment: dev
+default_environment: extract
 project_id: 20ab51bb-9080-43d6-9faf-aaf733d164a0
 environments:
-  - name: dev
-  - name: staging
-  - name: prod
+  - name: extract
+    config:
+      plugins:
+        extractors:
+          - name: tap-csv
+            config:
+              csv_files_definition: ./extract/csv_files_definition.json
+  - name: load
+    config:
+      plugins:
+        extractors:
+          - name: tap-csv
+            config:
+              files:
+                - entity: public-order_details
+                  path: ./extract/output/source=csv/extracted_at=${EXTRACTED_AT}/table=public-order_details/
+                  keys: [order_id, product_id]
+                - entity: public-categories
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-categories/
+                  keys: [category_id]
+                - entity: public-customers
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-customers/
+                  keys: [customer_id]
+                - entity: public-employee_territories
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employee_territories/
+                  keys: [employee_id, territory_id]
+                - entity: public-employees
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employees/
+                  keys: [employee_id]
+                - entity: public-orders
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-orders/
+                  keys: [order_id]
+                - entity: public-products
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-products/
+                  keys: [product_id]
+                - entity: public-region
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-region/
+                  keys: [region_id]
+                - entity: public-shippers
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-shippers/
+                  keys: [shipper_id]
+                - entity: public-suppliers
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-suppliers/
+                  keys: [supplier_id]
+                - entity: public-territories
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-territories/
+                  keys: [territory_id]
+                - entity: public-us_states
+                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-us_states/
+                  keys: [state_id]
 plugins:
   extractors:
     - name: tap-csv
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
-      config:
-        csv_files_definition: $CSV_FILE_DEFINITION
-      select:
-        - "*.*"
     - name: tap-postgres
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
@@ -21,7 +64,6 @@ plugins:
         - name: filter_schemas
           value: [public] # Substitua por esquemas que você deseja incluir
       config:
-        default_replication_method: INCREMENTAL
         host: localhost
         port: 5432
         user: northwind_user
@@ -44,8 +86,8 @@ plugins:
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/target-csv.git
       config:
+        destination_path: ./extract/output/source=${SOURCE}
         file_naming_scheme: extracted_at={datestamp}/table={stream_name}/{timestamp}.csv
-        output_path: ./extract/output/source=${SOURCE}
   utilities:
     - name: airflow
       variant: apache

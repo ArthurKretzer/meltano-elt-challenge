@@ -1,5 +1,5 @@
-SOURCE=csv TIMESTAMP=$(date +%Y-%m-%d) CSV_FILE_DEFINITION=./extract/extract_csv_files_definition.json meltano schedule run daily-csv-load
+MELTANO_ENVIRONMENT=extract SOURCE=csv TIMESTAMP=$(date +%Y-%m-%d) meltano run tap-csv target-csv
 
-SOURCE=postgres TIMESTAMP=$(date +%Y-%m-%d) meltano run tap-postgres target-csv
+MELTANO_ENVIRONMENT=extract SOURCE=postgres TIMESTAMP=$(date +%Y-%m-%d) meltano run tap-postgres target-csv
 
-SCHEMA=public CSV_FILE_DEFINITION=./extract/load_csv_files_definition.json meltano run tap-csv target-postgres
+MELTANO_ENVIRONMENT=load SCHEMA=public EXTRACTED_AT=$(date +%Y-%m-%d) meltano run tap-csv target-postgres
