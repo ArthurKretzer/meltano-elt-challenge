@@ -8,7 +8,7 @@ This project is a solution to the [Indicium Tech Code Challenge](https://github.
 
 - Loading the data from the local filesystem into a PostgreSQL database.
 
-- he pipeline must be idempotent, handle failures gracefully, and allow reprocessing for specific days by passing a date parameter.
+- The pipeline must be idempotent, handle failures gracefully, and allow reprocessing for specific days by passing a date parameter.
 
 ## Directory Structure
 
@@ -249,7 +249,7 @@ This result represents the INNER JOIN of the "order details" and "orders", so on
 
 # Development
 
-To develop features to this project, lintint and formatting must be done.
+To develop features to this project, linting and formatting must be done.
 
 ## Linting and Formatting
 
