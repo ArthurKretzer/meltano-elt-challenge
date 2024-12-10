@@ -21,6 +21,8 @@ dag = DAG(
     max_active_runs=1,
     catchup=True,
     render_template_as_native_obj=True,
+    params={"custom_elt_date": None},
+    default_args=default_args,
 )
 
 extract_csv = BashOperator(
@@ -29,7 +31,7 @@ extract_csv = BashOperator(
         f"cd {PROJECT_ROOT}; "
         "MELTANO_ENVIRONMENT=extract "
         "SOURCE=csv "
-        "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        "DATESTAMP={{ dag_run.conf['custom_elt_date'] if dag_run.conf.get('custom_elt_date') else ds }} "
         f"{MELTANO_BIN} run extract_csv"
     ),
     dag=dag,
@@ -41,7 +43,7 @@ extract_postgres = BashOperator(
         f"cd {PROJECT_ROOT}; "
         "MELTANO_ENVIRONMENT=extract "
         "SOURCE=postgres "
-        "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        "DATESTAMP={{ dag_run.conf['custom_elt_date'] if dag_run.conf.get('custom_elt_date') else ds }} "
         f"{MELTANO_BIN} run extract_postgres"
     ),
     dag=dag,
@@ -53,7 +55,7 @@ load_to_postgres = BashOperator(
         f"cd {PROJECT_ROOT}; "
         "MELTANO_ENVIRONMENT=load "
         "SCHEMA=public "
-        "EXTRACTED_AT={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        "EXTRACTED_AT={{ dag_run.conf['custom_elt_date'] if dag_run.conf.get('custom_elt_date') else ds }} "
         f"{MELTANO_BIN} run load_to_postgres"
     ),
     dag=dag,
