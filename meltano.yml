@@ -8,7 +8,10 @@ environments:
         extractors:
           - name: tap-csv
             config:
-              csv_files_definition: ./extract/csv_files_definition.json
+              files:
+                - entity: public-order_details
+                  path: ./extract/order_details.csv
+                  keys: [order_id, product_id]
   - name: load
     config:
       plugins:
@@ -17,40 +20,40 @@ environments:
             config:
               files:
                 - entity: public-order_details
-                  path: ./extract/output/source=csv/extracted_at=${EXTRACTED_AT}/table=public-order_details/
+                  path: ./output/source=csv/extracted_at=${EXTRACTED_AT}/table=public-order_details/
                   keys: [order_id, product_id]
                 - entity: public-categories
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-categories/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-categories/
                   keys: [category_id]
                 - entity: public-customers
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-customers/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-customers/
                   keys: [customer_id]
                 - entity: public-employee_territories
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employee_territories/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employee_territories/
                   keys: [employee_id, territory_id]
                 - entity: public-employees
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employees/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-employees/
                   keys: [employee_id]
                 - entity: public-orders
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-orders/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-orders/
                   keys: [order_id]
                 - entity: public-products
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-products/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-products/
                   keys: [product_id]
                 - entity: public-region
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-region/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-region/
                   keys: [region_id]
                 - entity: public-shippers
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-shippers/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-shippers/
                   keys: [shipper_id]
                 - entity: public-suppliers
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-suppliers/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-suppliers/
                   keys: [supplier_id]
                 - entity: public-territories
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-territories/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-territories/
                   keys: [territory_id]
                 - entity: public-us_states
-                  path: ./extract/output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-us_states/
+                  path: ./output/source=postgres/extracted_at=${EXTRACTED_AT}/table=public-us_states/
                   keys: [state_id]
 plugins:
   extractors:
@@ -86,8 +89,8 @@ plugins:
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/target-csv.git
       config:
-        destination_path: ./extract/output/source=${SOURCE}
-        file_naming_scheme: extracted_at={datestamp}/table={stream_name}/{timestamp}.csv
+        destination_path: ./output/source=${SOURCE}
+        file_naming_scheme: extracted_at=${DATESTAMP}/table={stream_name}/{timestamp}.csv
   utilities:
     - name: airflow
       variant: apache
@@ -95,3 +98,13 @@ plugins:
         git+https://github.com/meltano/airflow-ext.git@main apache-airflow==2.8.1
         --constraint
         https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-no-providers-${MELTANO__PYTHON_VERSION}.txt
+jobs:
+  - name: extract_csv
+    tasks:
+      - tap-csv target-csv
+  - name: extract_postgres
+    tasks:
+      - tap-postgres target-csv
+  - name: load_to_postgres
+    tasks:
+      - tap-csv target-postgres
