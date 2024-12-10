@@ -1,90 +1,62 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.models import Variable
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash import BashOperator
+import os
 
-# Define o DAG
+PROJECT_ROOT = os.getenv("MELTANO_PROJECT_ROOT", os.getcwd())
+MELTANO_BIN = ".meltano/run/bin"
+
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "retries": 2,
+    "retry_delay": timedelta(seconds=10),
+}
+
 dag = DAG(
     "ELT_with_meltano",
     schedule_interval="@daily",
-    start_date=datetime(2024, 12, 7),
+    start_date=datetime(2024, 12, 1),
+    max_active_runs=1,
     catchup=True,
+    render_template_as_native_obj=True,
 )
 
-
-def get_execution_date(**kwargs):
-    custom_elt_date = Variable.get("custom_elt_date", default_var=None)
-
-    if custom_elt_date:
-        print(f"Usando a data definida na variável do Airflow: {custom_elt_date}")
-        date = custom_elt_date
-    else:
-        execution_date = kwargs["execution_date"]
-        print(f"Usando a data de execução da DAG: {execution_date}")
-        date = execution_date.strftime("%Y-%m-%d")
-
-    return date
-
-
-def extract_csv_to_csv(**kwargs):
-    import os
-
-    date = get_execution_date(kwargs)
-
-    env_vars = "MELTANO_ENVIRONMENT=extract"
-    env_vars += f"SOURCE=csv TIMESTAMP={date}"
-    env_vars += " CSV_FILE_DEFINITION=./extract/extract_csv_files_definition.json"
-    meltano_command = "meltano schedule run tap-csv target-csv"
-    os.system(env_vars + meltano_command)
-
-
-extract_csv = PythonOperator(
+extract_csv = BashOperator(
     task_id="extract_csv_to_csv",
-    python_callable=extract_csv_to_csv,
+    bash_command=(
+        f"cd {PROJECT_ROOT}; "
+        "MELTANO_ENVIRONMENT=extract "
+        "SOURCE=csv "
+        "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        f"{MELTANO_BIN} run tap-csv target-csv"
+    ),
     dag=dag,
-    provide_context=True,
 )
 
-
-def extract_postgres_to_csv(**kwargs):
-    import os
-
-    date = get_execution_date(kwargs)
-
-    env_vars = "MELTANO_ENVIRONMENT=extract"
-    env_vars += f"SOURCE=postgres TIMESTAMP={date}"
-    meltano_command = "meltano run tap-postgres target-csv"
-    os.system(env_vars + meltano_command)
-
-
-extract_postgres = PythonOperator(
+extract_postgres = BashOperator(
     task_id="extract_postgres_to_csv",
-    python_callable=extract_postgres_to_csv,
+    bash_command=(
+        f"cd {PROJECT_ROOT}; "
+        "MELTANO_ENVIRONMENT=extract "
+        "SOURCE=postgres "
+        "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        f"{MELTANO_BIN} run tap-postgres target-csv"
+    ),
     dag=dag,
-    provide_context=True,
 )
 
-
-def load_csv_data_to_postgres(**kwargs):
-    import os
-
-    date = get_execution_date(kwargs)
-
-    env_vars = "MELTANO_ENVIRONMENT=load"
-    env_vars += (
-        "SCHEMA=public CSV_FILE_DEFINITION=./extract/load_csv_files_definition.json"
-    )
-    env_vars += f"EXTRACTED_AT={date}"
-    meltano_command = "meltano run tap-csv target-postgres"
-    os.system(env_vars + meltano_command)
-
-
-load_to_postgres = PythonOperator(
+load_to_postgres = BashOperator(
     task_id="load_csv_data_to_postgres",
-    python_callable=load_csv_data_to_postgres,
+    bash_command=(
+        f"cd {PROJECT_ROOT}; "
+        "MELTANO_ENVIRONMENT=load "
+        "SCHEMA=public "
+        "EXTRACTED_AT={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
+        f"{MELTANO_BIN} run tap-csv target-postgres"
+    ),
     dag=dag,
-    provide_context=True,
 )
 
 [extract_csv, extract_postgres] >> load_to_postgres
