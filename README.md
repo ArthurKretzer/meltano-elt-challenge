@@ -115,7 +115,7 @@ Databases should be running for the ELTs to work.
     docker compose up -d
     ```
 
-    To stop and remove volumes, run:
+    To stop and remove volumes for a clean pipeline run or for house keeping, execute:
 
     ```bash
     docker compose down -v
@@ -125,13 +125,13 @@ Databases should be running for the ELTs to work.
 
     To load environment variables from .env to your bash, execute:
 
-    ```
+    ```bash
     set -a
     source .env
     set +a
     ```
 
-    This assures that your envs will not be stores into the bash command history.
+    This assures that your envs will not be stored into the bash command history.
 
 ## Commands
 
@@ -155,6 +155,12 @@ MELTANO_ENVIRONMENT=extract SOURCE=postgres DATESTAMP=$(date +%Y-%m-%d) meltano 
 MELTANO_ENVIRONMENT=extract SOURCE=postgres DATESTAMP=$(date +%Y-%m-%d) meltano run extract_postgres
 ```
 
+**Variables Definition**
+
+- MELTANO_ENVIRONMENT: Selects the Meltano environment to execute the command.
+- SOURCE: Specifies the source to compose the output file path as definied in meltano.yaml.
+- DATESTAMP: Specifies the datastamp in format 'YYYY-mm-dd' to compose the output file path as definied in meltano.yaml.
+
 ### Load Data
 
 EXTRACTED_AT must match the DATESTAMP of the outputs.
@@ -164,6 +170,12 @@ EXTRACTED_AT must match the DATESTAMP of the outputs.
 ```bash
 MELTANO_ENVIRONMENT=load SCHEMA=public EXTRACTED_AT=$(date +%Y-%m-%d) meltano run tap-csv target-postgres
 ```
+
+**Variables Definition**
+
+- MELTANO_ENVIRONMENT: Selects the Meltano environment to execute the command.
+- SCHEMA: Specifies the target schema to store the tables.
+- EXTRACTED_AT: Specifies the datastamp in format 'YYYY-mm-dd' to compose the source file path as definied in meltano.yaml.
 
 ## Orchestrate with Airflow
 
