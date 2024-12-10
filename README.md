@@ -219,6 +219,12 @@ You can manually select the task represented by a small square on the left and c
 
 ![sucessful-dag](images/sucess-dag.png)
 
+The result should be the data replicated to Postgres. A tool like [VS Code JDBC extension](vscode:extension/cweijan.vscode-database-client2), Dbeaver or PGAdmin should provide the following table structure on the replicated database:
+
+![resulting-schema](images/resulting-schema.png)
+
+**NOTE:** customer_customer_demo and customer_demographics will not appear as they don't have any data.
+
 ## ELT Result Testing
 
 Inside the notebook directory, you will find s [Jupyter notebook](./notebook/query_data.ipynb) designed to validate and test the data pipeline. The script is specifically tailored to verify the data in the replication/destination database by running a query. Use these notebooks to confirm that:
