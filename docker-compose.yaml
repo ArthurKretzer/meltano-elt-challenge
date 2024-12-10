@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${SOURCE_POSTGRES_DB:-northwind}
+      - POSTGRES_USER=${SOURCE_POSTGRES_USER:-northwind_user}
+      - POSTGRES_PASSWORD=${SOURCE_POSTGRES_PASSWORD:-thewindisblowing}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/data/northwind.sql:/docker-entrypoint-initdb.d/northwind.sql
+    ports:
+      - 5432:5432
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file
+      
+
+  target-db:
+    image: postgres:12
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${TARGET_POSTGRES_DB:-northwind}
+      - POSTGRES_USER=${TARGET_POSTGRES_USER:-northwind_user}
+      - POSTGRES_PASSWORD=${TARGET_POSTGRES_PASSWORD:-thewindisblowing}
+    volumes:
+      - postgres-replication-data:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file
+
+volumes:
+  postgres-data:
+  postgres-replication-data:

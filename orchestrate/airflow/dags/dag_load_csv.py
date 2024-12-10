@@ -41,6 +41,7 @@ extract_postgres = BashOperator(
     task_id="extract_postgres_to_csv",
     bash_command=(
         f"cd {PROJECT_ROOT}; "
+        "set -a; source .env; set +a; "
         "MELTANO_ENVIRONMENT=extract "
         "SOURCE=postgres "
         "DATESTAMP={{ dag_run.conf['custom_elt_date'] if dag_run.conf.get('custom_elt_date') else ds }} "
@@ -53,6 +54,7 @@ load_to_postgres = BashOperator(
     task_id="load_csv_data_to_postgres",
     bash_command=(
         f"cd {PROJECT_ROOT}; "
+        "set -a; source .env; set +a; "
         "MELTANO_ENVIRONMENT=load "
         "SCHEMA=public "
         "EXTRACTED_AT={{ dag_run.conf['custom_elt_date'] if dag_run.conf.get('custom_elt_date') else ds }} "

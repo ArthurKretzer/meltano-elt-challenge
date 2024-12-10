@@ -69,9 +69,9 @@ plugins:
       config:
         host: localhost
         port: 5432
-        user: northwind_user
-        password: thewindisblowing
-        database: northwind
+        user: ${SOURCE_POSTGRES_USER}
+        password: ${SOURCE_POSTGRES_PASSWORD}
+        database: ${SOURCE_POSTGRES_DB}
       select:
         - "*.*"
   loaders:
@@ -81,9 +81,9 @@ plugins:
       config:
         host: localhost
         port: 5433
-        user: northwind_user
-        password: thewindisblowing
-        database: northwind-replication
+        user: ${TARGET_POSTGRES_USER}
+        password: ${TARGET_POSTGRES_PASSWORD}
+        database: ${TARGET_POSTGRES_DB}
         default_target_schema: ${SCHEMA}
     - name: target-csv
       variant: meltanolabs
