@@ -30,7 +30,7 @@ extract_csv = BashOperator(
         "MELTANO_ENVIRONMENT=extract "
         "SOURCE=csv "
         "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
-        f"{MELTANO_BIN} run tap-csv target-csv"
+        f"{MELTANO_BIN} run extract_csv"
     ),
     dag=dag,
 )
@@ -42,7 +42,7 @@ extract_postgres = BashOperator(
         "MELTANO_ENVIRONMENT=extract "
         "SOURCE=postgres "
         "DATESTAMP={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
-        f"{MELTANO_BIN} run tap-postgres target-csv"
+        f"{MELTANO_BIN} run extract_postgres"
     ),
     dag=dag,
 )
@@ -54,7 +54,7 @@ load_to_postgres = BashOperator(
         "MELTANO_ENVIRONMENT=load "
         "SCHEMA=public "
         "EXTRACTED_AT={{ dag_run.conf['custom_elt_date'] | default(ds) }} "
-        f"{MELTANO_BIN} run tap-csv target-postgres"
+        f"{MELTANO_BIN} run load_to_postgres"
     ),
     dag=dag,
 )
