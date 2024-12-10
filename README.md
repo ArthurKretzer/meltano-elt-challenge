@@ -1,6 +1,6 @@
 # Meltano ELT Challenge
 
-This project is a solution to the Indicium Tech Code Challenge, which focuses on building a robust data pipeline to replicate data from multiple sources into a unified PostgreSQL database. The challenge involves:
+This project is a solution to the [Indicium Tech Code Challenge](https://github.com/techindicium/code-challenge/tree/main), which focuses on building a data pipeline to replicate data from multiple sources into a unified PostgreSQL database. The challenge involves:
 
 - Extracting data from a PostgreSQL database and a CSV file.
 
@@ -41,7 +41,9 @@ Files are stored in a structured format:
 ./output/source=postgres/extracted_at=2024-01-20/table=public-categories/2024-12-10.T014028.csv
 ```
 
-All tables from the PostgreSQL source are extracted, even if not directly used.
+All tables from the PostgreSQL source are extracted, even if not directly used in the final result query.
+
+Parquet is a better file format choice due to its compression and preservation of data types compared to CSV. However, the tap and target plugins for Meltano are not as robust or well documented for Parquet as they are for CSV. Therefore, CSV was preferred in this case.
 
 ### Load Data into PostgreSQL
 
@@ -79,7 +81,7 @@ To meet the requirements of the challenge, the following tools are used:
 
 - **Docker:** Ensure Docker and Docker Compose are installed.
 
-- **Python Environment:** Install dependencies listed in requirements.txt.
+- **Python Environment:** Install dependencies listed in requirements.txt with ```pip install -r requirements.txt```. This project was tested with Python 3.10.12.
 
 - **Environment Variables:** Configure the .env file based on .env-example. To generate the .env file, copy the provided .env-example file and fill in the appropriate values. Example:
 
@@ -167,19 +169,19 @@ MELTANO_ENVIRONMENT=load SCHEMA=public EXTRACTED_AT=$(date +%Y-%m-%d) meltano ru
 
 An Airflow DAG was manually created to run the pipelines. To interact with this DAG you must start airflow, configure it and then instantiate the webserver and the scheduler.
 
-**Initialize Airflow**
+### Initialize Airflow
 
 ```bash
 meltano invoke airflow:initialize
 ```
 
-**Create Admin User**
+### Create Admin User
 
 ```bash
 meltano invoke airflow users create -u admin@localhost -p password --role Admin -e admin@localhost -f admin -l admin
 ```
 
-**Start Airflow Services**
+### Start Airflow Services
 
 Start the webserver:
 
@@ -195,13 +197,41 @@ meltano invoke airflow scheduler
 
 If everything worked accordingly, Airflow must be accessible in your browser by <http://localhost:8080>.
 
+### Running the DAG
+
+When you acess airflow with your credentials, you must see the DAG ELT_with_meltano like in the image bellow.
+
+![airflow-dag-pannel](images/dag.png)
+
+You can start or pause the DAG orchestration by toggling the button on the left, or trigger it manually by clickin the "play" button in "Actions".
+
+This will prompt for trigger parameters. If you want to execute the ELT on a specific date on the past, you can provide it on the format "YYYY-mm-dd". Leaving it blank will get the instant date in UTC.
+
+![manual-dag-trigger](images/manual-trigger.png)
+
+Accessing the DAG you can observe logs and task execution times. For instance a task can fail. 
+
+For this DAG, if the initial tasks fail the upstream will fail too like in the image below.
+
+![failed-dag](images/failed-dag.png)
+
+You can manually select the task represented by a small square on the left and click "Clear Task", this will retrigger this task and hopefully it will be sucessfull on the next run, the result should be seem like the image below.
+
+![sucessful-dag](images/sucess-dag.png)
+
 ## ELT Result Testing
 
-Inside the notebook directory, you will find s Jupyter notebook designed to validate and test the data pipeline. The script is specifically tailored to verify the data in the replication/destination database by running a query. Use these notebooks to confirm that:
+Inside the notebook directory, you will find s [Jupyter notebook](./notebook/query_data.ipynb) designed to validate and test the data pipeline. The script is specifically tailored to verify the data in the replication/destination database by running a query. Use these notebooks to confirm that:
 
 - The extracted data is properly loaded into the target database.
 
 - Orders and their details can be queried and match the expected results.
+
+If you run the notebook, the following output should be exhibited:
+
+![result](images/result.png)
+
+This result represents the INNER JOIN of the "order details" and "orders", so only orders that have details are exhibited.
 
 ## Notes
 
