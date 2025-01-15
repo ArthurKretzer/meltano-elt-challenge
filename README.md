@@ -91,7 +91,7 @@ To meet the requirements of the challenge, the following tools are used:
 
     Then, edit the .env file to include your specific database credentials, as shown below:
 
-    ```
+    ```txt
     # Source DB config
     SOURCE_POSTGRES_DB=meltano
     SOURCE_POSTGRES_USER=meltano_user
@@ -132,6 +132,14 @@ Databases should be running for the ELTs to work.
     ```
 
     This assures that your envs will not be stored into the bash command history.
+
+3. Install meltano utilities
+
+    Install meltano source and target connectors and airflow utility.
+
+    ```bash
+    meltano install
+    ```
 
 ## Commands
 
@@ -203,7 +211,7 @@ meltano invoke airflow webserver
 
 Start the scheduler:
 
-```
+```bash
 meltano invoke airflow scheduler
 ```
 
